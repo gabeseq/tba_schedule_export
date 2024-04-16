@@ -5,9 +5,10 @@ f = open("tba_api_key.txt", "r")
 key = f.read()
 tba = tbapy.TBA(key)
 
-doritos = input("Event code: ")
+event = input("Event code: ")
 
-matches = tba.event_matches(doritos, simple=True)
+matches = tba.event_matches(event, simple=True)
+teams = tba.event_teams(event)
 
 with open('matches.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile, delimiter=",")
@@ -24,7 +25,21 @@ with open('matches.csv', 'w', newline='') as csvfile:
                              blue_alliance[0][3:-1], blue_alliance[1][3:-1],
                              blue_alliance[2][3:-1]])
 
-# match_number
-# comp_level: qm
-# alliances: blue, red
-# blue, red : team_keys: frc### (remove frc)
+with open('teams.csv', 'w', newline='', encoding='utf-8') as csvfile2:
+    writer = csv.writer(csvfile2, delimiter=',')
+    writer.writerow(['Team Number', 'Team Name', 'Image URL'])
+    for team in teams:
+        team_key = team['key']
+        team_num = team['key'][3:]
+        image=""
+        if len(tba.team_media(team_key, 2024)) > 1:
+            image=tba.team_media(team_key, 2024)[1]['direct_url']
+        writer.writerow([team_num, team['nickname'], image])
+
+
+
+
+# for team in teams:
+#     print(team['nickname'])
+
+# print(tba.team_media(4028, 2024)[1]['direct_url'])
